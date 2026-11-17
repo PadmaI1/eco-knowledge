@@ -26,3 +26,13 @@ from sentence_transformers import CrossEncoder
 reranker = CrossEncoder(
     "cross-encoder/ms-marco-MiniLM-L-6-v2"
 )
+# =========================================================
+# 1. INITIAL SETUP
+# =========================================================
+
+load_dotenv()
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+

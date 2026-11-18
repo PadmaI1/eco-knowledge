@@ -174,3 +174,28 @@ def generate_embeddings(chunks, client):
     return chunks
 
 
+def store_chunks(chunks, collection):
+
+    ids = []
+    documents = []
+    embeddings = []
+    metadatas = []
+
+    for chunk in chunks:
+
+        source = chunk["metadata"]["source"]
+        chunk_id = chunk["metadata"]["chunk_id"]
+
+        ids.append(f"{source}_{chunk_id}")
+        documents.append(chunk["text"])
+        embeddings.append(chunk["embedding"])
+        metadatas.append(chunk["metadata"])
+
+    collection.upsert(
+        ids=ids,
+        documents=documents,
+        embeddings=embeddings,
+        metadatas=metadatas
+    )
+
+

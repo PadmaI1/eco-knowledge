@@ -65,3 +65,23 @@ context_precision_metric = ContextPrecision(llm=ragas_llm)
 
 context_recall_metric = ContextRecall(llm=ragas_llm)
 
+chroma_client = chromadb.PersistentClient(
+    path="data/chroma"
+)
+
+# Set this to True ONCE if you want to rebuild the index
+# from scratch. Then change it back to False.
+RESET_INDEX = False
+
+if RESET_INDEX:
+    try:
+        chroma_client.delete_collection("eco_knowledge")
+    except Exception:
+        pass
+
+collection = chroma_client.get_or_create_collection(
+    name="eco_knowledge",
+    metadata={"hnsw:space": "cosine"}
+)
+
+

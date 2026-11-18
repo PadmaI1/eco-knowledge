@@ -199,3 +199,41 @@ def store_chunks(chunks, collection):
     )
 
 
+# =========================================================
+# 4. BUILD THE KNOWLEDGE BASE
+# =========================================================
+
+def build_knowledge_base(collection, client):
+
+    # Don't regenerate embeddings if data is already stored.
+    if collection.count() > 0:
+
+        print("Knowledge base already exists.")
+        print("Total records:", collection.count())
+
+        return
+
+    print("Building knowledge base...")
+
+    documents = load_docs(Path("data/raw"))
+
+    chunks = chunk_documents(
+        documents,
+        chunk_size=200,
+        overlap=40
+    )
+
+    embedded_chunks = generate_embeddings(
+        chunks,
+        client
+    )
+
+    store_chunks(
+        embedded_chunks,
+        collection
+    )
+
+    print("Knowledge base created.")
+    print("Total records:", collection.count())
+
+

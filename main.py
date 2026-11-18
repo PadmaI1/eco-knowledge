@@ -156,3 +156,21 @@ def chunk_documents(documents, chunk_size=200, overlap=40):
     return chunks
 
 
+# =========================================================
+# 3. GENERATE AND STORE EMBEDDINGS
+# =========================================================
+
+def generate_embeddings(chunks, client):
+
+    for chunk in chunks:
+
+        result = client.models.embed_content(
+            model="gemini-embedding-001",
+            contents=chunk["text"]
+        )
+
+        chunk["embedding"] = result.embeddings[0].values
+
+    return chunks
+
+

@@ -85,3 +85,40 @@ collection = chroma_client.get_or_create_collection(
 )
 
 
+# =========================================================
+# 2. DOCUMENT PROCESSING
+# =========================================================
+
+def load_docs(directory):
+
+    documents = []
+
+    txt_files = directory.glob("*.txt")
+
+    for txt_file in txt_files:
+
+        text = txt_file.read_text(encoding="utf-8")
+
+        cleaned_text = " ".join(text.split())
+
+        documents.append({
+            "text": cleaned_text,
+            "metadata": {
+                "source": txt_file.name
+            }
+        })
+
+    return documents
+
+
+def get_topic(filename):
+
+    topics = {
+        "solar_energy.txt": "renewable_energy",
+        "climate_change.txt": "climate",
+        "waste_management.txt": "waste"
+    }
+
+    return topics.get(filename, "other")
+
+

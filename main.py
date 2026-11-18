@@ -122,3 +122,37 @@ def get_topic(filename):
     return topics.get(filename, "other")
 
 
+def chunk_documents(documents, chunk_size=200, overlap=40):
+
+    chunks = []
+
+    for document in documents:
+
+        start = 0
+        chunk_id = 0
+
+        text = document["text"]
+
+        while start < len(text):
+
+            end = start + chunk_size
+
+            chunk = text[start:end]
+
+            chunks.append({
+                "text": chunk,
+                "metadata": {
+                    "source": document["metadata"]["source"],
+                    "chunk_id": chunk_id,
+                    "topic": get_topic(
+                        document["metadata"]["source"]
+                    )
+                }
+            })
+
+            chunk_id += 1
+            start += chunk_size - overlap
+
+    return chunks
+
+

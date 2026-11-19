@@ -237,3 +237,35 @@ def build_knowledge_base(collection, client):
     print("Total records:", collection.count())
 
 
+# =========================================================
+# 5. BM25 KEYWORD SEARCH
+# =========================================================
+
+def tokenize(text):
+
+    return re.findall(
+        r"[a-zA-Z0-9]+(?:[.-][a-zA-Z0-9]+)*",
+        text.lower()
+    )
+
+
+def build_bm25_index(collection):
+
+    data = collection.get(
+        include=["documents", "metadatas"]
+    )
+
+    documents = data["documents"]
+    ids = data["ids"]
+    metadatas = data["metadatas"]
+
+    tokenized_documents = [
+        tokenize(document)
+        for document in documents
+    ]
+
+    bm25 = BM25Okapi(tokenized_documents)
+
+    return bm25, documents, ids, metadatas
+
+

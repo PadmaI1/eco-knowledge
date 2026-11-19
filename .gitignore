@@ -10,3 +10,7 @@ wheels/
 .venv
 
 .env
+
+# Generated vector store and embeddings
+data/chroma/
+data/processed/

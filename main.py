@@ -269,3 +269,47 @@ def build_bm25_index(collection):
     return bm25, documents, ids, metadatas
 
 
+def keyword_search(
+    question,
+    bm25,
+    documents,
+    ids,
+    metadatas,
+    top_k=5,
+    topic=None
+):
+
+    query_tokens = tokenize(question)
+
+    scores = bm25.get_scores(query_tokens)
+
+    ranked_indices = sorted(
+        range(len(scores)),
+        key=lambda i: scores[i],
+        reverse=True
+    )
+
+    results = []
+
+    for i in ranked_indices:
+
+        # Ignore documents that don't match the topic.
+        if topic and metadatas[i].get("topic") != topic:
+            continue
+
+        if scores[i] <= 0:
+            continue
+
+        results.append({
+            "id": ids[i],
+            "text": documents[i],
+            "metadata": metadatas[i],
+            "score": float(scores[i])
+        })
+
+        if len(results) == top_k:
+            break
+
+    return results
+
+

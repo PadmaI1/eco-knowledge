@@ -313,3 +313,17 @@ def keyword_search(
     return results
 
 
+# =========================================================
+# 6. SEMANTIC + KEYWORD SEARCH
+# =========================================================
+
+def generate_query_embedding(question, client):
+
+    result = client.models.embed_content(
+        model="gemini-embedding-001",
+        contents=question
+    )
+
+    return result.embeddings[0].values
+
+

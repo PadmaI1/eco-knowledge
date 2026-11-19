@@ -327,3 +327,54 @@ def generate_query_embedding(question, client):
     return result.embeddings[0].values
 
 
+def reciprocal_rank_fusion(
+    semantic_results,
+    keyword_results,
+    k=60
+):
+
+    scores = {}
+    result_lookup = {}
+
+    # Add scores from semantic search.
+    for rank, result in enumerate(semantic_results, start=1):
+
+        document_id = result["id"]
+
+        scores[document_id] = (
+            scores.get(document_id, 0) + 1 / (k + rank)
+        )
+
+        result_lookup[document_id] = result
+
+    # Add scores from keyword search.
+    for rank, result in enumerate(keyword_results, start=1):
+
+        document_id = result["id"]
+
+        scores[document_id] = (
+            scores.get(document_id, 0) + 1 / (k + rank)
+        )
+
+        result_lookup[document_id] = result
+
+    # Sort documents by their combined RRF score.
+    ranked_ids = sorted(
+        scores,
+        key=lambda document_id: scores[document_id],
+        reverse=True
+    )
+
+    fused_results = []
+
+    for document_id in ranked_ids:
+
+        result = result_lookup[document_id].copy()
+
+        result["rrf_score"] = scores[document_id]
+
+        fused_results.append(result)
+
+    return fused_results
+
+

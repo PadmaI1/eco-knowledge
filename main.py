@@ -378,3 +378,64 @@ def reciprocal_rank_fusion(
     return fused_results
 
 
+def hybrid_search(
+    question,
+    collection,
+    client,
+    bm25,
+    documents,
+    ids,
+    metadatas,
+    top_k=3,
+    topic=None
+):
+
+    # A. Semantic search
+
+    query_embedding = generate_query_embedding(
+        question,
+        client
+    )
+
+    query_args = {
+        "query_embeddings": [query_embedding],
+        "n_results": 5
+    }
+
+    if topic:
+        query_args["where"] = {"topic": topic}
+
+    semantic_data = collection.query(**query_args)
+
+    semantic_results = []
+
+    for i in range(len(semantic_data["ids"][0])):
+
+        semantic_results.append({
+            "id": semantic_data["ids"][0][i],
+            "text": semantic_data["documents"][0][i],
+            "metadata": semantic_data["metadatas"][0][i]
+        })
+
+    # B. Keyword search
+
+    keyword_results = keyword_search(
+        question,
+        bm25,
+        documents,
+        ids,
+        metadatas,
+        top_k=5,
+        topic=topic
+    )
+
+    # C. Combine both result lists using RRF
+
+    fused_results = reciprocal_rank_fusion(
+        semantic_results,
+        keyword_results
+    )
+
+    return fused_results[:top_k]
+
+

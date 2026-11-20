@@ -439,3 +439,37 @@ def hybrid_search(
     return fused_results[:top_k]
 
 
+def rerank_results(question, results, reranker, top_k=3):
+
+    # Step 1: Create question-document pairs.
+
+    pairs = []
+
+    for result in results:
+
+        pairs.append(
+            (question, result["text"])
+        )
+
+    # Step 2: Ask the cross-encoder to score each pair.
+
+    scores = reranker.predict(pairs)
+
+    # Step 3: Attach each score to its corresponding result.
+
+    for i in range(len(results)):
+
+        results[i]["rerank_score"] = float(scores[i])
+
+    # Step 4: Sort results by reranking score.
+
+    reranked_results = sorted(
+        results,
+        key=lambda result: result["rerank_score"],
+        reverse=True
+    )
+
+    # Step 5: Return only the best results.
+
+    return reranked_results[:top_k]
+

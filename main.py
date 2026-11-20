@@ -560,3 +560,77 @@ def get_sources(results):
     return sources
 
 
+# =========================================================
+# 9. COMPLETE RAG PIPELINE
+# =========================================================
+
+def ask_question(
+    question,
+    collection,
+    client,
+    bm25,
+    documents,
+    ids,
+    metadatas,
+    topic=None
+):
+
+    # Step 1: Initial retrieval using hybrid search.
+
+    results = hybrid_search(
+        question,
+        collection,
+        client,
+        bm25,
+        documents,
+        ids,
+        metadatas,
+        top_k=10
+    )
+
+    # Step 2: Rerank the retrieved candidates.
+
+    results = rerank_results(
+        question,
+        results,
+        reranker,
+        top_k=3
+    )
+
+    print(f"Reranked_results: {results}")
+
+    if not results:
+
+        return {
+            "answer": (
+                "I don't have enough relevant information "
+                "to answer this question."
+            ),
+            "sources": []
+        }
+
+    # Step 2: Turn retrieved chunks into context.
+
+    context = build_context(results)
+
+    # Step 3: Construct the prompt.
+
+    prompt = build_prompt(question, context)
+
+    # Step 4: Ask Gemini to generate an answer.
+
+    answer = generate_answer(prompt, client)
+
+    # Step 5: Collect source citations.
+
+    sources = get_sources(results)
+
+    return {
+        "answer": answer,
+        "sources": sources,
+        "retrieved_contexts": [
+            result["text"] for result in results
+        ]
+    }
+
+

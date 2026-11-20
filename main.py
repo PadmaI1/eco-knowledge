@@ -544,3 +544,19 @@ def generate_answer(prompt, client):
     return response.text
 
 
+def get_sources(results):
+
+    sources = []
+
+    for result in results:
+
+        source = result["metadata"]["source"]
+        chunk_id = result["metadata"]["chunk_id"]
+
+        sources.append(
+            f"{source} (Chunk {chunk_id})"
+        )
+
+    return sources
+
+

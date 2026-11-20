@@ -473,3 +473,26 @@ def rerank_results(question, results, reranker, top_k=3):
 
     return reranked_results[:top_k]
 
+# =========================================================
+# 7. BUILD CONTEXT AND PROMPT
+# =========================================================
+
+def build_context(results):
+
+    context = ""
+
+    for i, result in enumerate(results):
+
+        source = result["metadata"]["source"]
+        chunk_id = result["metadata"]["chunk_id"]
+
+        context += f"""
+[Source {i + 1}: {source}, Chunk {chunk_id}]
+
+{result["text"]}
+
+"""
+
+    return context
+
+

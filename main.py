@@ -634,3 +634,19 @@ def ask_question(
     }
 
 
+# =========================================================
+# 10. RUN THE APPLICATION
+# =========================================================
+
+# First, create the knowledge base if it doesn't exist.
+build_knowledge_base(collection, client)
+
+# Next, build the BM25 index from ChromaDB records.
+bm25, documents, ids, metadatas = build_bm25_index(
+    collection
+)
+
+print("\nBM25 index created.")
+print("Total indexed documents:", len(documents))
+
+

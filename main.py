@@ -650,3 +650,48 @@ print("\nBM25 index created.")
 print("Total indexed documents:", len(documents))
 
 
+# =========================================================
+# 10. EVALUATION
+# =========================================================
+
+evaluation_dataset = [
+    {
+        "question": "What are the environmental benefits of solar energy?",
+        "relevant_sources": ["solar_energy.txt"],
+        "reference": (
+            "Solar energy generates electricity without direct "
+            "operational greenhouse gas emissions and reduces "
+            "dependence on fossil fuels."
+        )
+    },
+    {
+        "question": "What are the main causes of climate change?",
+        "relevant_sources": ["climate_change.txt"],
+        "reference": (
+            "Climate change is primarily driven by greenhouse gas "
+            "emissions from human activities, including burning "
+            "fossil fuels and other emission-producing activities."
+        )
+    },
+    {
+        "question": "How can waste management reduce pollution?",
+        "relevant_sources": ["waste_management.txt"],
+        "reference": (
+            "Proper waste management reduces pollution by improving "
+            "waste collection, recycling, treatment and disposal, "
+            "and preventing waste from contaminating the environment."
+        )
+    },
+    {
+        "question": (
+            "How does solar energy help reduce dependence on fossil fuels?"
+        ),
+        "relevant_sources": ["solar_energy.txt"],
+        "reference": (
+            "Solar energy provides electricity from sunlight, "
+            "reducing the need to generate electricity using "
+            "fossil fuels."
+        )
+    }
+]
+

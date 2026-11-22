@@ -770,3 +770,107 @@ def evaluate_retrieval(
     print(f"Average Precision: {average_precision:.3f}")
     print(f"Average Recall: {average_recall:.3f}")
 
+def evaluate_with_ragas(
+    evaluation_dataset,
+    collection,
+    client,
+    bm25,
+    documents,
+    ids,
+    metadatas
+):
+
+    all_scores = {
+        "faithfulness": [],
+        "answer_relevancy": [],
+        "context_precision": [],
+        "context_recall": []
+    }
+
+    for item in evaluation_dataset:
+
+        question = item["question"]
+        reference = item["reference"]
+
+        print("\n" + "=" * 60)
+        print("Evaluating:", question)
+
+        # 1. Run the actual EcoKnowledge RAG pipeline
+        rag_response = ask_question(
+            question,
+            collection,
+            client,
+            bm25,
+            documents,
+            ids,
+            metadatas
+        )
+
+        answer = rag_response["answer"]
+        retrieved_contexts = rag_response["retrieved_contexts"]
+
+        print("\nGenerated answer:")
+        print(answer)
+
+        if not retrieved_contexts:
+            print("No contexts retrieved. Skipping Ragas metrics.")
+            continue
+
+        # 2. Evaluate faithfulness
+        faithfulness_result = faithfulness_metric.score(
+            user_input=question,
+            response=answer,
+            retrieved_contexts=retrieved_contexts
+        )
+
+        # 3. Evaluate answer relevance
+        relevancy_result = answer_relevancy_metric.score(
+            user_input=question,
+            response=answer
+        )
+
+        # 4. Evaluate context precision
+        precision_result = context_precision_metric.score(
+            user_input=question,
+            retrieved_contexts=retrieved_contexts,
+            reference=reference
+        )
+
+        # 5. Evaluate context recall
+        recall_result = context_recall_metric.score(
+            user_input=question,
+            retrieved_contexts=retrieved_contexts,
+            reference=reference
+        )
+
+        # 6. Extract numeric scores
+        scores = {
+            "faithfulness": faithfulness_result.value,
+            "answer_relevancy": relevancy_result.value,
+            "context_precision": precision_result.value,
+            "context_recall": recall_result.value
+        }
+
+        # 7. Store scores for overall evaluation
+        for metric_name, score in scores.items():
+            all_scores[metric_name].append(score)
+
+        print("\nRagas scores:")
+
+        for metric_name, score in scores.items():
+            print(f"{metric_name}: {score:.3f}")
+
+    # 8. Calculate averages
+    print("\n" + "=" * 60)
+    print("OVERALL RAGAS EVALUATION")
+    print("=" * 60)
+
+    for metric_name, scores in all_scores.items():
+
+        if scores:
+            average = sum(scores) / len(scores)
+
+            print(f"Average {metric_name}: {average:.3f}")
+        else:
+            print(f"Average {metric_name}: No scores")
+

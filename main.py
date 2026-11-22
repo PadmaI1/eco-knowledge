@@ -706,3 +706,67 @@ def calculate_retrieval_metrics(
 
     return precision, recall
 
+def evaluate_retrieval(
+    evaluation_dataset,
+    bm25,
+    documents,
+    ids,
+    metadatas,
+    reranker
+):
+    all_precisions = []
+    all_recalls = []
+
+    for item in evaluation_dataset:
+        question = item["question"]
+        relevant_sources = item["relevant_sources"]
+
+        # 1. Retrieve candidate documents
+        results = hybrid_search(
+            question,
+            collection,
+            client,
+            bm25,
+            documents,
+            ids,
+            metadatas,
+            top_k=10
+        )
+
+        # 2. Rerank the retrieved documents
+        results = rerank_results(
+            question,
+            results,
+            reranker,
+            top_k=3
+        )
+
+        # 3. Extract unique source filenames
+        retrieved_sources = list({
+            result["metadata"]["source"]
+            for result in results
+        })
+
+        # 4. Calculate precision and recall
+        precision, recall = calculate_retrieval_metrics(
+            retrieved_sources,
+            relevant_sources
+        )
+
+        all_precisions.append(precision)
+        all_recalls.append(recall)
+
+        print(f"\nQuestion: {question}")
+        print(f"Retrieved sources: {retrieved_sources}")
+        print(f"Expected sources: {relevant_sources}")
+        print(f"Precision: {precision:.3f}")
+        print(f"Recall: {recall:.3f}")
+
+    # 5. Calculate average metrics
+    average_precision = sum(all_precisions) / len(all_precisions)
+    average_recall = sum(all_recalls) / len(all_recalls)
+
+    print("\n--- Overall Evaluation ---")
+    print(f"Average Precision: {average_precision:.3f}")
+    print(f"Average Recall: {average_recall:.3f}")
+

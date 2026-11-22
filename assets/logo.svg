@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="EcoKnowledge logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E7D4F"/>
+      <stop offset="1" stop-color="#14532D"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#86EFAC"/>
+      <stop offset="1" stop-color="#DCFCE7"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="152" height="152" rx="36" fill="url(#bg)"/>
+  <!-- open book -->
+  <path d="M30 104 C48 96 66 98 80 108 C94 98 112 96 130 104 L130 120 C112 112 94 114 80 124 C66 114 48 112 30 120 Z" fill="#F0FDF4" opacity="0.95"/>
+  <path d="M80 108 L80 124" stroke="#14532D" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- leaf -->
+  <path d="M80 100 C56 92 50 64 60 38 C88 40 106 62 98 90 C94 96 88 99 80 100 Z" fill="url(#leaf)"/>
+  <path d="M80 100 C78 82 76 62 66 46" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/>
+  <path d="M77 78 L90 70 M74 64 L84 56" stroke="#2E7D4F" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- search sparkle -->
+  <circle cx="112" cy="46" r="11" fill="none" stroke="#DCFCE7" stroke-width="4"/>
+  <path d="M120 54 L128 62" stroke="#DCFCE7" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

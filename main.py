@@ -874,3 +874,47 @@ def evaluate_with_ragas(
         else:
             print(f"Average {metric_name}: No scores")
 
+evaluate_retrieval(
+    evaluation_dataset,
+    bm25,
+    documents,
+    ids,
+    metadatas,
+    reranker
+)
+
+evaluate_with_ragas(
+    evaluation_dataset,
+    collection,
+    client,
+    bm25,
+    documents,
+    ids,
+    metadatas
+)
+
+'''
+# Ask a question.
+questions = [
+    "What are the environmental risks of lithium-ion batteries?",
+    "How does solar energy reduce carbon emissions?",
+    "What are the effects of improper electronic waste disposal?"
+]
+
+for question in questions:
+
+    response = ask_question(
+        question,
+        collection,
+        client,
+        bm25,
+        documents,
+        ids,
+        metadatas
+    )
+
+    print("\nQuestion:", question)
+    print("\nAnswer:", response["answer"])
+    print("\nSources:", response["sources"])
+    print("-" * 60)
+    '''

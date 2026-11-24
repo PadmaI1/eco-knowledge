@@ -23,7 +23,7 @@ EcoKnowledge answers questions about climate change, solar energy and waste mana
 
 ## Features
 
-- **Document ingestion** – loads text files, tags them by topic and splits them into overlapping chunks (200 words, 40-word overlap).
+- **Document ingestion** – loads text files, tags them by topic and splits them into overlapping chunks (200 characters, 40-word overlap).
 - **Embeddings and vector store** – embeds chunks with `gemini-embedding-001` and stores them in a persistent ChromaDB collection (cosine distance).
 - **Hybrid search** – combines ChromaDB semantic search with BM25 keyword search using Reciprocal Rank Fusion.
 - **Cross-encoder reranking** – reranks fused results with `cross-encoder/ms-marco-MiniLM-L-6-v2` and keeps the top 3.
